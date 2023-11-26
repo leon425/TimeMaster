@@ -1,0 +1,55 @@
+Supported by websocket (real time, bidirectional communication technology between client and server. Enables dynamic and efficient communication)
+
+WSGI (Web server Gateway Interface) = Standard interface for traditional web apps, handles synchronous requests only
+ASGI (Asynchronous Server Gateway Interface) = Standard interface for real-time web apps, capable of handling async requests
+Both are supported by Django
+
+pip install channels channels_redis
+add channel to installed_apps in settings.py -> 'channels',
+
+specify channel_layers in settings.py:
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND' : 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 8000)], # It's the port
+        },
+    },
+}
+
+settings.py
+switch from WSGI_APPLICATOIN to ASGI_APLICATION (So we're not gonna use wsgi.py, instead we use asgi.py)
+WSGI_APPLICATION = 'webgame.wsgi.application'  ->  ASGI_APPLICATION = 'webgame.asgi.application'
+
+Go to asgi.py and work on the configuration
+Paste this code to specify which parts of our app should handle different types of requests:
+import os
+from channels.auth import AuthMiddlewareStack
+from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.security.websocket import AllowedHostsOriginValidator
+from django.core.asgi import get_asgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'webgame.settings')
+django_asgi_app = get_asgi_application()
+
+import stats.routing
+
+application = ProtocolTypeRouter (
+    {
+        "http": django_asgi_app, # http request are going to be handled by django_asgi_app
+        "websocket": AllowedHostsOriginValidator( # websocket request handled by those tings
+            AuthMiddlewareStack(URLRouter(stats.routing.websocket_urlpatterns))
+        ),
+    }
+)
+
+Create routing.py in your app (basically it's a url) & consumer.py (basically it's a view)
+
+Create a static/stats/dashboard.js in your application
+Link the dashboard.js with dashboard.html in the dashboard html script tag
+Go to dashboard.js and create the websocket
+
+
+
+
+

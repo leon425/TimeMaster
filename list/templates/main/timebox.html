@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+{% extends "main/base2.html" %}
+{% load static %}
+
+<html lang="en">
+<head>
+
+    <!--bootstrap-->
+    {% comment %} <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous"> {% endcomment %}
+    
+    {% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static '/css/timebox.css' %}">
+    {% endblock head %}
+
+    <meta charset="UTF-8">
+    <title>{% block title %}Timeboxing{% endblock %}</title>
+
+
+</head>
+
+<body>
+<div id="content",name="content", class="main">
+    {% block content %} <!--inside this block content, the elements will be pasted to the parent elements which is base2.html-->
+    
+    <form method="post" action="/timeboxing/">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary" name="create_template_tb" value="muah">Create Weekly Timebox</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+        <button type="submit" class="btn btn-primary" name="delete_all_tb_week" value="muah">Delete All Timebox</button>
+    </form>
+
+    <div class="container all_goals">
+
+        <div class="row all_goal" style="margin-right:30px;">
+            <div class="inner_head" style="">Quarter Year Goals</div>
+                <table style="">
+                    {% for goal in quarterly_goal %}
+                    <tr>
+                        <td>
+                            {{forloop.counter}}
+                        </td>
+                        <td>
+                            {{goal.name}}
+                            <form method="post" action="/timeboxing/">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary" name="delete_quarterly_goal" value="{{goal.id}}">delete</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td style="">
+                            <div class="form-group">
+                                <form method="post" action="/timeboxing/" class="form_goal">
+                                    {% csrf_token %}
+                                    {{form_quarterly_goal}}
+                                    <button type="submit" class="btn btn-primary" name="create_quarterly_goal" value="muahh">Create Goal</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+                                </form>
+                            </div>
+                        </td>
+                    </tr> 
+                </table>
+        </div>
+
+        <div class="row all_goal">
+            <div class="inner_head" style="">Monthly Goals</div>
+            <table>
+                {% for goal in monthly_goal %}
+                <tr>
+                    <td>
+                        {{forloop.counter}}
+                    </td>
+                    <td>
+                        {{goal.name}}
+                        <form method="post" action="/timeboxing/">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary" name="delete_monthly_goal" value="{{goal.id}}">delete</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td style="">
+                        <div class="form-group">
+                            <form method="post" action="/timeboxing/" class="form_goal">
+                                {% csrf_token %}
+                                {{form_monthly_goal}}
+                                <button type="submit" class="btn btn-primary" name="create_monthly_goal" value="muahh">Create Goal</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            
+        </div>
+
+    </div>
+
+    <div class="container">
+        {% for timebox in tb %}
+            {% if timebox.user == user %}
+
+                {% if forloop.counter|divisibleby:8 or forloop.counter == 1 %}
+                    <div class="row timebox_week">Week {{this_week}}</div>
+                    <div class="row all_goal">
+                        <div class="inner_head">Weekly Goals</div>
+                        {% comment %} {% for goal in weekly_goal %}
+                        {% endfor %} {% endcomment %}
+                    </div>
+                {% endif %}
+
+                <div class="row timebox">
+                    <div class="timebox_name">{{timebox.name}}</div>
+                    <div class="timebox_grid">
+
+                        <div class="timebox_item goal">
+                            <div class="inner_head">Goal</div>
+                            <table>
+                                <tr>
+                                <td>1</td>
+                                <td>Activity</td>
+                                </tr>
+                                <tr>
+                                <td>2</td>
+                                <td>Activity</td>
+                                </tr>
+
+                                <tr>
+                                <td></td>
+                                <td>
+                                    {% comment %} <form method="post" action="/timeboxing/">
+                                        {% csrf_token %}
+                                        {{form_goal.as_p}}
+                                        <button type="submit" name="create_goal" value="muahh" class="">Create New</button>
+                                    </form> {% endcomment %}
+                                </td>
+                                </tr>
+
+                                </table>
+                        </div> <!--timebox_item goal-->
+
+                        <div class="timebox_item priority">
+                            <div class="inner_head">Priority</div>
+                            <table>
+                                <tr>
+                                <td>1</td>
+                                <td>Activity</td>
+                                </tr>
+                                <tr>
+                                <td>2</td>
+                                <td>Activity</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td>
+                                        <form method="post" action="/timeboxing/">
+                                            {% csrf_token %}
+                                            {{form_priority.as_p}}
+                                            <button type="submit" name="create_priority" value="muahh" class="">Create New</button>
+                                        </form>
+                                    </td>
+                                    </tr>
+
+                                </table>
+                        </div> <!--timebox_item priority-->
+
+                        <div class="timebox_item schedule">
+                            <div class="inner_head">Schedule</div>
+                            <table class="table_schedule">
+                            <tr>
+                            <td>Time</td>
+                            <td>Activity</td>
+                            </tr>
+                            <tr>
+                            <td>Time</td>
+                            <td>Activity</td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <form method="post" action="/timeboxing/">
+                                        {% csrf_token %}
+                                        {{form_time_schedule.as_p}}
+                                        <button type="submit" name="create_time_schedule" value="muahh" class="">Create New</button>
+                                    </form>
+                                </td>
+                                <td>
+                                    <form method="post" action="/timeboxing/">
+                                        {% csrf_token %}
+                                        {{form_goal.as_p}}
+                                        <button type="submit" name="create_schedule" value="muahh" class="">Create New</button>
+                                    </form>
+                                </td>
+                            </tr>
+
+                            </table>
+                        </div> <!--timebox_item schedule-->
+
+                    </div> <!--timebox_grid-->
+                </div> <!--row timebox-->
+            {% endif %}
+        {% endfor %} 
+
+    </div> <!--container-->
+
+    {% endblock %}
+</div>
+
+<!--Bootstrap installation-->
+{% comment %} <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> {% endcomment %}
+
+</body>
+</html>
+

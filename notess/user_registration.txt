@@ -1,0 +1,39 @@
+create new app:
+python manage.py startapp register
+create the urls for register page (a simple path)
+
+go to views.py and import: (Because django provides a user registrattion form)
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+
+# Modifiy the UserCreationForm: 
+create form.py in register dir
+create a class that inherit UserCreationForm
+
+# Design the regisration page
+pip install django-crispy-forms     # automatic styling for forms
+Go to settings.py and add crispy forms to INSTALLED_APPS    ->    "crispy_forms"
+
+CRISPY_TEMPLATE_PACK="bootstrap5"  on settings.py  # Which frame work does the crispy forms use
+In register.html -> {% load crispy_forms_tags %}   #(To use crispy forms)
+
+{{form|crispy}}  # Its a filter to do a styling into the form
+
+Django already built a lof of built in pages, like login, logout, change password
+
+# Create a login page:
+create login.html 
+modify urls.py ->  path('', include("django.contrib.auth.urls")), # django will get to django.contrib.auth application and go to urls file # Create login page automatically
+In settings.py -> LOGIN_REDIRECT_URL = "/"   # Redirect us to home page when done logging in
+                  LOGOUT_REDIRECT_URL = "/"
+
+By default, when we go to Django, it has a user attribute. When there is no user signed in, its anonymus user and user.is_authenticated == False.
+
+
+Go to base2.html and add:  # to display things that only logged in users can see.
+{% if user.is_authenticated %}
+{% endif %}
+
+response.user = Getting the user. 
+
+

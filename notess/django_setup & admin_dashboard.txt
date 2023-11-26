@@ -1,0 +1,68 @@
+webgame is a project and game is an application that we're going to link into our project
+
+# Django Setup
+
+# Go to cmd, then go to the directory that you want to put your project at
+# django-admin startproject [project name]
+# cd [project name]
+# python manage.py runserver  #if you want to use specific port -> python manage.py runserver 5050
+# Server stop shortcut: ctrl + c
+# Create app: python manage.py startapp [app name]
+
+The webgame/urls.py is linked to games/urls.py that is linked to game/view.y
+webgame/urls.py is the urls for the project
+games/urls.py is the urls for the application
+game/view.py is the view of our website
+
+
+# Admin Dashboard
+
+
+# Create an admin account = cmd: python manage.py createsuperuser
+# create username, email, pass
+# go to site, then /admin
+# Go to admin.py to create an access for your admin dashboard about the models that you created
+
+
+# Static Files (Folder to add new things (CSS, Javascript, other add-ons) and separate them from python files)
+
+
+# Create a static folder. Inside it, create new folders for CSS and Javascript
+# Configure the static files in settings.py
+
+STATIC_URL = '/static/' #by default, Django already know the url path is /static/
+STATICFILES_DIRS = [ # tell django where our folders sits 
+    os.path.join(BASE_DIR, 'static') # BASE_DIR is specified earlier in settings.py. 'static' is the static folder name.
+] 
+
+# Go to your HTML templates
+{% load static %} <!---->
+<link rel="styleSheet" type="text/css" href="{% static '/css/main.css' %}"> <!-- go to static folders and find /css/main.css -->
+
+
+# Media Files (For any kind of images or videos)
+
+
+Create a media folder and inside it, create a new folder for images and videos.
+
+# in models.py
+create a new imageField :   venue_image = models.ImageField(null=True, blank=True, upload_to="images/") #inside the media directory, 
+                                            there will be a subdirectory called images where all the images will be saved
+
+if you want to display image: HomePage.objects.get(id=1).card_image.url
+
+# in settings.py configure it by:
+MEDIA_URL =  '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media') #the location of media file. media is the name of the folder
+
+
+# in HTML templates
+<img src="{% static 'images/myImage.jpg' %}">
+
+
+
+
+
+
+
+

@@ -1,0 +1,13 @@
+On terminal
+
+# make whatever folder you're on, a git repository. You can use git command on that folder
+git init 
+
+# git commit
+commit a git
+
+# git add [fileName]
+staging area (add file)
+
+# git status
+What we just did?

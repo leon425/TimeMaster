@@ -1,0 +1,116 @@
+- go to settings.py and add to installed apps: 'rest_framework'
+- Create new app for the front_end (django-admin startapp frontened)
+- Create new folder src\components. React src file will go to the components
+
+Installation
+- npm init -y (list all the apps in package.json)
+- npm i webpack webpack-cli --save-dev (install webpack that will bundle all JS file into 1 file)
+- npm i @babel/core babel-loader @babel/preset-env @babel/preset-react --save-dev (install babel that will take our code and transpile it so it's friendly to every browser. Convert code that can run in older browser )
+- npm i react react-dom --save-dev
+- npm install @material-ui/core(prebuilt components like bootstrap(I guess optional))
+- npm install @babel/plugin-proposal-class-properties (So you can use async and await in JS)
+- npm install react-router-dom (install react router)
+- npm install @material-ui/icons 
+
+Configuration scripts:
+- make new files inside frontend apps: babel.config.json
+- Set up babel loader
+
+'''
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "10"
+        }
+      }
+    ],
+    "@babel/preset-react"
+  ],
+  "plugins": ["@babel/plugin-proposal-class-properties"]
+}
+'''
+
+- make new file : webpack.config.json
+'''
+const path = require("path");
+const webpack = require("webpack");
+
+module.exports = {
+  entry: "./src/index.js", //entry point
+  output: { // put it in static/front/eng/[name].js
+    path: path.resolve(__dirname, "./static/frontend"),
+    filename: "[name].js",
+  },
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/, //exclude node-modules
+        use: {
+          loader: "babel-loader",
+        },
+      },
+    ],
+  },
+  optimization: {
+    minimize: true, //taking JS and minimize it/making it smaller. (deleteWhiteSpace)
+  },
+  plugins: [
+    new webpack.DefinePlugin({
+      "process.env": {
+        // This has effect on the react lib size
+        NODE_ENV: JSON.stringify("production"),
+      },
+    }),
+  ],
+};
+'''
+
+- Go to package.json and edit the scripts key
+'''
+"scripts": {
+    "dev":"webpack --mode developmnet --watch", //run webpack in development mode and watch mode (watch changes to JS file and automatically recompile the output JS file. )
+    "build:"webpack --mode production", //
+}
+'''
+
+- Inside src directory, make a new file called index.js
+- Make templates\frontend\index.html
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

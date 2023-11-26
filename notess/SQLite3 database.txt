@@ -1,0 +1,57 @@
+# SQLite3 DataBase
+
+
+Go to settings.py
+# We told Django that we have another app that has an independency like any other appOn installed apps, add your application name. e.g : 'game.apps.Gameconfig'.
+# go to cmd : python manage.py migrate
+# Go to models.py and build your models
+# When you done, you need to tell Django that you updated your models. pyton manage.py makemigrations game
+# apply the change. python manage.py migrate
+# You can see in migrations/0001_initial.py about your migrations
+
+# Add things to database:
+python manage.py shell
+from game.models import Item,ToDoList
+t = ToDoList(name="Tim\'s List") # t = ToDoList that the name is "Tim's List". We create a new list called Tim's List.
+t.save() #save into the database
+
+ToDoList.objects.all() #see all the objects # <QuerySet [<ToDoList: Tim's List>]>
+ToDoList.objects.get(id=1) #get objects that have 1 id
+ToDoList.objects.get(name="Tim's List")
+
+t.item_set.all() #Each ToDoList (Tim's List) Has a set that stores a bunch of items.
+t.item_set.create(text="Go To The Mall", complete=False)
+t.item_set.get(id=1) #= Go To The Mall # checking the item
+
+When you call ToDoList.objects, you are accessing the default manager for the ToDoList model. Model managers are responsible for querying the database
+and retrieving objects of the associated model. In this case, t represents the manager object for the ToDoList model.
+By using the manager, you can perform various operations such as filtering, creating, updating, or deleting objects of the ToDoList model.
+
+t = ToDoList.objects
+all_todo_lists = t.all()
+for todo_list in all_todo_lists:
+    print(todo_list.name) # Print the names of all ToDoLists
+
+new_item = Item.objects.create(todolist=t, text="New Item", complete=False)
+# In this example, a new Item object is created and associated with the t instance of ToDoList by setting todolist=t.
+
+
+#2 attempt
+python manage.py shell
+from game.models import Item,ToDoList
+t = ToDoList.objects
+t.filter(name__startswith="T") #see a t objects that starts with "T" #<QuerySet [<ToDoList: Tim's List>]>
+t.filter(name__startswith="Bob") #<QuerySet []>
+t.filter(id=1) #<QuerySet [<ToDoList: Tim's List>]>
+
+# Delete:
+del_object = t.get(id=1)
+del_object.delete() #delete ToDoList
+
+t1 = ToDoList(name="First list")
+t1.save()
+t2 = ToDoList(name="Second list)
+t2.save()
+t1.all() # error: AttributeError: 'ToDoList' object has no attribute 'all'. Because t1 != ToDoList.objects
+t.item_set.create(text="wake up", complete=False)
+t1.item_set.get(id=1) #<Item: wake up>

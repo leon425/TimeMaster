@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+{% extends "main/base2.html" %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} View List {% endblock %}</title>
+    
+    {% block head %}
+    <link rel="stylesheet" type="text/css" href="{% static '/css/list.css' %}">
+    {% endblock head %}
+
+</head>
+<body>
+{% block content %}
+    <!--Display Weekly Todolist  ==-->
+    <div class="container c1">
+
+        <div class="d-flex justify-content-center">
+            <form method="post" action="/todolist/">
+                {% csrf_token %}
+                {% if weekly_todolist == False %}
+                    {% if user.is_authenticated %}
+                        <button type="submit" value="muah" name="create_template_ls" style="background-color:transparent; border:none; ">
+                            <div style=""><img src={{img_plus.image.url}} style="width=80px; height:80px"></div>
+                            <p>Create New Weekly Todolist</p>
+                        </button>
+                    {% else %}
+                        <button type="button" style="padding:50px; background-color:transparent; border:none; " data-container="body" data-toggle="popover" data-placement="right" data-content="Please login to save list">
+                            <div style=""><img src={{img_plus.image.url}} style="width=80px; height:80px"></div>
+                            <p>Create New Weekly Todolist</p>
+                        </button>
+                    {% endif %}
+                {% else %}
+                <div style="padding:20px">
+                <button type="submit" class="btn btn-primary btn_1" value="muah" name="create_template_ls" style="">
+                    Create Todolist for another week
+                </button>
+                <button type="submit" class="btn btn-primary" value="muah" name="delete_all_list_week">Delete all List</button>
+                <div class="d-flex justify-content-center line"></div>
+            </div>
+                {% endif %}
+                
+            </form>
+        </div>
+        
+        <div class="row all_todolist" style="">
+            {% for list in lw %}
+                {% if list.user == user %} <!--Display only the current user's list-->
+                
+                    {% if forloop.counter|divisibleby:8 or forloop.counter == 1 %}
+                        {% comment %} <div style=""> 
+                            <form method="post" action="/list/">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-primary" name="templateWeek" value="{{list.weekNum}}">Set as template</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+                                <button type="submit" class="btn btn-primary" name="" value="">Delete This Week's List</button>
+                            </form>
+                        </div> {% endcomment %}
+                    {% endif %}
+                    
+                    <div class="col-auto todolist_outer" > <!--Whole Todolist-->
+                        <div class="todolist_inner">
+                            <div class="list_head" style="display:flex; flex-direction:row; justify-content:space-around;">
+                                <div>{{list.name}} </div>
+                            </div>
+                            
+                        <!--List of the Item in all Todolist-->
+                            <form method="post" action="/todolist/">
+                                {% csrf_token %}
+                                <ul class="list_items">
+                                    {% for i in list.item_w_set.all %} <!-- Looping all the items in ls.item_set.all(). When you are looping something, leave the brackets in ls.item_set.all() -->
+                                        {% if i.complete == False %} <!--if it isn't completed, show it in the list-->
+                                            <li class="list_item">
+                                                <input type="checkbox" name="{{list.id}}c{{i.id}}" value="clicked_week"> <!--check whether it's complete or not-->
+                                                {{i.text}}
+                                                <button type="submit" class="btn deleteList" name="deleteItem_week" value="delete{{list.id}}c{{i.id}}"><ion-icon name="close-outline" class="closeButton" style="margin-left:10px;"></ion-icon></button> <!--delete particular item-->
+                                            </li>
+                                        {% else %}
+                                            <li class="list_item">
+                                                <input type="checkbox" name="{{list.id}}c{{i.id}}" value="clicked_week" checked> <!--the default is checked-->
+                                                {{i.text}}
+                                                <button type="submit" class="btn deleteList" name="deleteItem_week" value="delete{{list.id}}c{{i.id}}" style="margin-left:10px;"><ion-icon name="close-outline" class="closeButton" style=""></ion-icon></button> <!--delete particular item-->
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %} <!--end the for loop-->
+                                </ul>
+                                <button type="submit" name="save_week" value="{{list.id}}" class="btn btn-primary">Save Changes</button> <!--the default is checked--> <!--when the button is saved, it will send the
+                                value, which is "save" as a dictionary to views.py. {"save":["save"]}
+                                                                                {"name":["value"]}-->   
+                            </form>
+                            
+                
+                            <!--Create new Item-->
+                            <form method="post" action="/todolist/">
+                                {% csrf_token %}
+                                {{form_w.as_p}} 
+                                <button type="submit" name="newItem_week" value="submit{{list.id}}">Create New</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+                            </form>
+
+                        </div> <!--Todolist_inner-->
+
+                        <div class="deleteList_1">
+                            <form method="post" action="/todolist/">
+                                {%csrf_token%}
+                                <button type="submit" class="btn deleteList" value="{{list.id}}" name="delete_ls_week"><ion-icon name="close-outline" class="closeButton" style=""></ion-icon></button>
+                            </form>
+                        </div>
+
+                    </div> <!--Whole ToDoList-->
+                
+                    {% if forloop.counter|divisibleby:7 %}
+                        <div class="d-flex justify-content-center line"></div>
+                    {% endif %}
+
+                {% endif %}
+            {% endfor %}
+        </div> <!--row row-cols-2-->
+        
+
+    </div>
+
+
+
+    <!--Display Original ToDoList-->
+    <div class="container c1">
+        <div class="d-flex justify-content-center flexContainer">
+            <button  id="listButton" type="button" value="muah" name="create_ls_1" style="background-color:transparent; border:none">
+                <div style=""><img src={{img_plus.image.url}} style="width=80px; height:80px"></div>
+                <p>Create New Additional Todolist</p>
+            </button>
+        </div>
+
+        <div class="row">
+        {% for list in ls %}
+        {% if list.user == user %} <!--Display only the current user's list-->
+        <div class="col" >
+        <h1>{{list.name}}</h1>
+
+
+        <!--Change Todolist Name-->
+        <form method="post" action="/todolist/"> 
+            {% csrf_token %}
+            {{form2.as_p}}
+            <button type="submit" class="btn btn-primary" value="{{list.id}}" name="change_ls">Change List Name</button> <!--the button is automatically set for submitting the form-->
+        </form>
+
+        <!--List of the Item in all Todolist-->
+        <form method="post" action="/todolist/">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary" value="{{list.id}}" name="delete_ls">Delete List</button>
+        <ul>
+        {% for i in list.item_set.all %} <!-- Looping all the items in ls.item_set.all(). When you are looping something, leave the brackets in ls.item_set.all() -->
+            {% if i.complete == False %} <!--if it isn't completed, show it in the list-->
+            <li>
+                <input type="checkbox" name="{{list.id}}c{{i.id}}" value="clicked" > <!--check whether it's complete or not-->
+                {{i.text}}
+            </li>
+            {% else %}
+            <li>
+                <input type="checkbox" name="{{list.id}}c{{i.id}}" value="clicked" checked> <!--the default is checked-->
+                {{i.text}}
+            </li>
+            {% endif %}
+            
+            <button type="submit" name="deleteItem" value="delete{{list.id}}c{{i.id}}">Delete Item</button> <!--delete particular item-->
+        {% endfor %} <!--end the for loop-->
+        </ul>
+        <button type="submit" name="save" value="{{list.id}}">Save</button> <!--the default is checked--> <!--when the button is saved, it will send the
+            value, which is "save" as a dictionary to views.py. {"save":["save"]}
+                                                            {"name":["value"]}-->   
+        </form>
+
+        
+        <!--Create new Item-->
+        <form method="post" action="/todolist/">
+            {% csrf_token %}<!--This element must go inside a form element. IDK the reason-->
+            {{form.as_p}} <!--Pass a form object and django will automatically create a form for us-->
+            <!--{{form.as_table}} is the default one. {{form.as_p}} is the vertical form. {{form.as_ul}} as a list-->
+        <button type="submit" name="newItem" value="submit{{list.id}}">Create New</button> <!--all the information in this form will be passed to the view.py by dictionary--><!--the submit button in form in django is automatically set-->
+        </form>
+        
+    </div> <!--col-->
+        {% endif %}
+    {% endfor %}
+    </div> <!--row-->
+
+    
+    <!--Create New List-->
+    <form method="post" action="/todolist/">
+        {% csrf_token %}
+        {{form3.as_p}}
+        {% if user.is_authenticated %}
+            <button type="submit" class="btn btn-primary" value="muah" name="create_ls">Create New List</button>
+        {% else %}
+            <button type="button" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="right" data-content="Please login to save list">Create New List</button>
+        {% endif %} 
+    </form>
+
+    <form method="post" action='/todolist/'>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary" value="muah" name="delete_all_list">Delete all List</button>
+    </form>
+    
+
+</div> <!--container c1 (additional todolist)-->
+
+{% endblock content %}
+
+{% block scripts %}
+<script>
+    $( function( ) {
+        $( "[data-toggle='popover'").popover();
+    } )
+</script>
+{% endblock scripts %}
+
+</body>
+</html>
+
+
+
+

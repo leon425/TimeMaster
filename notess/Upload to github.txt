@@ -1,0 +1,6 @@
+# .env
+Protect your credential information or codes in .env files
+SECRET_KEY = config('SECRET_KEY')
+
+# requirements text
+in terminal: pip freeze > requirements.txt

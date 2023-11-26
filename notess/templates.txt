@@ -1,0 +1,39 @@
+create new folder called templates. Inside it, create a new folder called main. Then, create a html file called base.html & home.html
+
+base2.html = the base template. The parent template that is absolute (it's only every single page).(menubar)
+{% extends 'main/base2.html' %} on every child template that inherit base2.html. extend everything from base2.html
+'' path based on home.html & home function
+base2.html based on index function
+
+# Create a form
+
+create new file -> form.py
+Use POST for modify the database and to send secret data to the server. Post hide and encrypted the information
+Use GET for retrieve information. All informations that you type, get pasted in the url. Default is GET
+
+# upload images
+
+go to settings.py ->   import os
+
+go to the bottom & add :     
+MEDIA_ROOT = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+Go to webgame/urls.py
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns=[blablabla]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # when we upload image, it will allow us to automatically create an url 
+
+Go to models.py
+create a new imageField :   venue_image = models.ImageField(null=True, blank=True, upload_to="images/") #inside the media directory, 
+                                            there will be a subdirectory called images where all the images will be saved
+
+if you want to display image: HomePage.objects.get(id=1).card_image.url
+
+# If you want to use index in templates
+{% load index %}
+{{ my_list|index:x }}
